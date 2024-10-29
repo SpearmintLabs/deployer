@@ -14,8 +14,6 @@ else
     exit 1
 fi
 
-echo "$OS_NAME   $OS_VERSION_ID"
-
 if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
     if [[ "$OS_NAME" == "ubuntu" && ! "$OS_VERSION_ID" =~ ^(20|22|24)$ ]] || \
        [[ "$OS_NAME" == "debian" && ! "$OS_VERSION_ID" =~ ^(11|12)$ ]]; then
@@ -43,22 +41,26 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
     fi
 
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
-    echo "Updating packages for RPM-based system..."
-    if command -v dnf >/dev/null 2>&1; then
-        dnf update -y
-        dnf install sudo -y
-        dnf install wget -y
-    elif command -v yum >/dev/null 2>&1; then
-        yum update -y
-        yum install sudo -y
-        yum install wget -y
-    else
-        echo "No supported package manager found (dnf/yum). Exiting."
-        exit 1
-    fi
-else
-    echo "Unsupported OS: $OS_NAME"
-    exit 1
+clear
+echo -e "[\e[7\e[31mFATAL\e[0m] Oops! RPM systems, like $OS_NAME are not supported at this time"
+echo -e "[\e[34mINFO\e[0m] RPM Compatibility is coming in Spearmint v3 (Grazing Deer)."
+exit 1
+#    echo "Updating packages for RPM-based system..."
+#    if command -v dnf >/dev/null 2>&1; then
+#        dnf update -y
+#        dnf install sudo -y
+#        dnf install wget -y
+#    elif command -v yum >/dev/null 2>&1; then
+#        yum update -y
+#        yum install sudo -y
+#        yum install wget -y
+#    else
+#        echo "No supported package manager found (dnf/yum). Exiting."
+#        exit 1
+#    fi
+# else
+#    echo "Unsupported OS: $OS_NAME"
+#    exit 1
 fi
 
 mkdir -p /srv/peppermint
