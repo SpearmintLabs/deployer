@@ -99,6 +99,7 @@ show_help() {
     echo "Commands:"
     echo "  install   Install Peppermint ticket system"
     echo "  version   Display the Spearmint version"
+    echo "  credits   Shows the credits for the script"
     echo "  start     Start the Peppermint system"
     echo "  stop      Stop the Peppermint system"
     echo "  restart   Restart the Peppermint system"
@@ -154,8 +155,11 @@ case "$1" in
         echo ""
         echo -e "\e[92mSpearmint Labs\e[0m, a \e[36mCloud\e[0m\e[95mExis\e[0m \e[37mLLC\e[0m Company"
         ;;
-    help | *)
+    help)
         show_help
+        ;;
+    *)
+        echo "Error! That command does not exist. Use spearmint help to see a list of available commands:
         ;;
 esac
 EOF
