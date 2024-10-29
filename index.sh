@@ -36,8 +36,6 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 
     if [[ "$OS_NAME" == "debian" ]]; then
         install_if_missing "iptables-nft"
-    else
-        exit 1
     fi
 
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
