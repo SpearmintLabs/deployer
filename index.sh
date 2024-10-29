@@ -85,14 +85,14 @@ cat << 'EOF' > /usr/local/bin/spearmint
 INSTALL_DIR="/srv/peppermint"
 
 show_help() {
-    echo " _____                                 _       _   "
-    echo "/  ___|                               (_)     | |  "
-    echo "\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
-    echo " \`--. \ '_ \ / _ \/ _\` | '__| '_ \` _ \| | '_ \| __|"
-    echo "/\__/ / |_) |  __/ (_| | |  | | | | | | | | | | |_ "
-    echo "\____/| .__/ \___|\__,_|_|  |_| |_| |_|_|_| |_|\__|"
-    echo "      | |                                          "
-    echo "      |_|                                          "
+    echo -e "\e[92m _____                                 _       _   "
+    echo -e "\e[92m/  ___|                               (_)     | |  "
+    echo -e "\e[92m\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
+    echo -e "\e[92m \`--. \ '_ \ / _ \/ _\` | '__| '_ \` _ \| | '_ \| __|"
+    echo -e "\e[92m/\__/ / |_) |  __/ (_| | |  | | | | | | | | | | |_ "
+    echo -e "\e[92m\____/| .__/ \___|\__,_|_|  |_| |_| |_|_|_| |_|\__|"
+    echo -e "\e[92m      | |                                          "
+    echo -e "\e[92m      |_|                                          \e[0m"
     echo
     echo "Usage: spearmint {install|version|start|stop|restart|upgrade|help}"
     echo
@@ -147,6 +147,12 @@ case "$1" in
         docker compose pull
         docker compose up -d
         echo "Upgrade complete!"
+        ;;
+    credits)
+        echo -e "\e[96mAuthor: Sydney Morrison (syd.gg)\e[0m"
+        echo -e "\e[93mSpecial Mention: Jack Andrews (Creator of Peppermint)\e[0m"
+        echo ""
+        echo -e "\e[92mSpearmint Labs\e[0m, a \e[36mCloud\e[0m\e[95mExis\e[0m \e[37mLLC\e[0m Company"
         ;;
     help | *)
         show_help
