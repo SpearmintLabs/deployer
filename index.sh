@@ -24,7 +24,6 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
     fi
 
     echo "Updating packages for APT-based system..."
-
 	install_if_missing() {
     	if ! command -v "$1" &> /dev/null; then
         	echo "$1 not found, installing..."
@@ -37,12 +36,22 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	install_if_missing "sudo"
 	install_if_missing "wget"
 
+    if [[ "$OS_NAME" == "debian" ]]; then
+        install_if_missing "iptables-nft"
+    else
+        exit 1
+    fi
+
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" ]]; then
     echo "Updating packages for RPM-based system..."
     if command -v dnf >/dev/null 2>&1; then
         dnf update -y
+        dnf install sudo -y
+        dnf install wget -y
     elif command -v yum >/dev/null 2>&1; then
         yum update -y
+        yum install sudo -y
+        yum install wget -y
     else
         echo "No supported package manager found (dnf/yum). Exiting."
         exit 1
