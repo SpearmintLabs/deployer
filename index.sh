@@ -42,7 +42,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
         exit 1
     fi
 
-elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" ]]; then
+elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
     echo "Updating packages for RPM-based system..."
     if command -v dnf >/dev/null 2>&1; then
         dnf update -y
@@ -68,7 +68,7 @@ if [[ "$OS_NAME" == "ubuntu" ]]; then
     wget "https://i.spearmint.sh/ubuntu.sh" -O Spearmint-Installer.sh
 elif [[ "$OS_NAME" == "debian" ]]; then
     wget "https://i.spearmint.sh/debian.sh" -O Spearmint-Installer.sh
-elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" ]]; then
+elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
     echo "Warning: This script is not compatible with RPM-based systems at the moment."
     echo "Compatibility is planned in v3 (Grazing Deer)."
     exit 1
