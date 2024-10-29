@@ -159,7 +159,7 @@ case "$1" in
         show_help
         ;;
     *)
-        echo "Error! That command does not exist. Use spearmint help to see a list of available commands:
+        echo "Error! That command does not exist. Use spearmint help to see a list of available commands"
         ;;
 esac
 EOF
