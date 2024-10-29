@@ -118,7 +118,7 @@ case "$1" in
         fi
         ;;
     version)
-        echo "Spearmint v2.3 Red Leopard"
+        echo "Spearmint v3 Grazing Deer"
         ;;
     start)
         echo "Starting Peppermint..."
