@@ -73,7 +73,7 @@ elif [[ "$OS_NAME" == "debian" ]]; then
     wget "https://i.spearmint.sh/debian-test.sh" -O Spearmint-Installer.sh
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
     echo "Warning: This script is not compatible with RPM-based systems at the moment."
-    echo "Compatibility is planned in v3 (Grazing Deer)."
+    echo "Compatibility is planned in v3 Release 2 (Grazing Deer)."
     exit 1
 else
     echo "Unsupported OS. Exiting."
@@ -125,7 +125,7 @@ case "$1" in
         fi
         ;;
     version)
-        echo "Spearmint v3 Grazing Deer"
+        echo "Spearmint v3 Release 1 (Grazing Deer)"
         ;;
     start)
         echo "Starting Peppermint..."
