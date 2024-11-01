@@ -97,7 +97,9 @@ show_help() {
     echo -e "\e[92m      | |                                          "
     echo -e "\e[92m      |_|                                          \e[0m"
     echo
-    echo "Usage: spearmint {install|version|start|stop|restart|upgrade|help}"
+    echo "Usage: spearmint {command}"
+    echo "Please report any issues to Sydney! sydmae on Discord."
+    echo "Issues: https://github.com/SpearmintLabs/Issues/issues"
     echo
     echo "Commands:"
     echo "  install   Install Peppermint ticket system"
