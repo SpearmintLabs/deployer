@@ -36,8 +36,9 @@ services:
     volumes:
       - "/srv/spearmint/diun.yml:/diun.yml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/srv/spearmint/diundir:/data"
     environment:
-      - "TZ=Europe/Paris"
+      - "TZ=America/New_York"
       - "LOG_LEVEL=info"
       - "LOG_JSON=false"
     restart: always

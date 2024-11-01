@@ -162,6 +162,10 @@ case "$1" in
     help)
         show_help
         ;;
+    diun)
+        cd "$INSTALL_DIR"
+        nano diun.yml
+        ;;
     status)
         cd "$INSTALL_DIR"
         bash prettifier.sh

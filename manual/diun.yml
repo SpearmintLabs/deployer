@@ -83,13 +83,3 @@ regopts:
 providers:
   docker:
     watchStopped: true
-  swarm:
-    watchByDefault: true
-  kubernetes:
-    namespaces:
-      - default
-      - production
-  file:
-    directory: ./imagesdir
-  nomad:
-    watchByDefault: true
