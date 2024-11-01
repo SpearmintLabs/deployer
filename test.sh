@@ -21,6 +21,8 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
         exit 1
     fi
 
+    apt update
+
     echo "Updating packages for APT-based system..."
 	install_if_missing() {
     	if ! command -v "$1" &> /dev/null; then
