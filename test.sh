@@ -33,6 +33,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	
 	install_if_missing "sudo"
 	install_if_missing "wget"
+    install_if_missing "ncurses-utils"
 
     if [[ "$OS_NAME" == "debian" ]]; then
         install_if_missing "iptables-nft"
@@ -40,7 +41,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
 clear
-echo -e "[\e[7\e[31mFATAL\e[0m] Oops! RPM systems, like $OS_NAME are not supported at this time"
+echo -e "[\e[7;31mFATAL\e[0m] Oops! RPM systems, like $OS_NAME are not supported at this time"
 echo -e "[\e[34mINFO\e[0m] RPM Compatibility is coming in Spearmint v3 (Grazing Deer)."
 exit 1
 #    echo "Updating packages for RPM-based system..."
@@ -103,7 +104,7 @@ show_help() {
     echo "  start     Start the Peppermint system"
     echo "  stop      Stop the Peppermint system"
     echo "  restart   Restart the Peppermint system"
-    echo "  status    Check the status of the Peppermint containers
+    echo "  status    Check the status of the Peppermint containers"
     echo "  upgrade   Update to the latest version of Peppermint"
     echo "  logs      Show the logs of the Peppermint and Postgres containers"
     echo "  help      Show this help menu"
@@ -164,7 +165,7 @@ case "$1" in
         bash prettifier.sh
         ;;
     *)
-        echo "Error! That command does not exist. Use spearmint help to see a list of available commands"
+        echo -e "[\e[7;31mERROR\e[0m] That command does not exist. Use spearmint help to see a list of available commands"
         ;;
 esac
 EOF
