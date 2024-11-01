@@ -61,9 +61,9 @@ exit 1
 #    exit 1
 fi
 
-mkdir -p /srv/peppermint
+mkdir -p /srv/spearmint
 
-cd /srv/peppermint
+cd /srv/spearmint
 if [[ "$OS_NAME" == "ubuntu" ]]; then
     wget "https://i.spearmint.sh/ubuntu-test.sh" -O Spearmint-Installer.sh
 elif [[ "$OS_NAME" == "debian" ]]; then
@@ -82,7 +82,7 @@ cat << 'EOF' > /usr/local/bin/spearmint
 #!/bin/bash
 
 # Define Peppermint installation directory
-INSTALL_DIR="/srv/peppermint"
+INSTALL_DIR="/srv/spearmint"
 
 show_help() {
     echo -e "\e[92m _____                                 _       _   "
@@ -103,6 +103,7 @@ show_help() {
     echo "  start     Start the Peppermint system"
     echo "  stop      Stop the Peppermint system"
     echo "  restart   Restart the Peppermint system"
+    echo "  status    Check the status of the Peppermint containers
     echo "  upgrade   Update to the latest version of Peppermint"
     echo "  logs      Show the logs of the Peppermint and Postgres containers"
     echo "  help      Show this help menu"
@@ -158,6 +159,9 @@ case "$1" in
     help)
         show_help
         ;;
+    status)
+        cd "$INSTALL_DIR"
+        bash prettifier.sh
     *)
         echo "Error! That command does not exist. Use spearmint help to see a list of available commands"
         ;;
@@ -166,7 +170,7 @@ EOF
 
 chmod +x /usr/local/bin/spearmint
 
-echo "Deployment Information for Peppermint" > /srv/peppermint/sprmnt.txt
+echo "Deployment Information for Peppermint" > /srv/spearmint/sprmnt.txt
 
 clear
 
