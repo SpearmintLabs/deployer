@@ -162,6 +162,7 @@ case "$1" in
     status)
         cd "$INSTALL_DIR"
         bash prettifier.sh
+        ;;
     *)
         echo "Error! That command does not exist. Use spearmint help to see a list of available commands"
         ;;
