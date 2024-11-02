@@ -21,6 +21,8 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
         exit 1
     fi
 
+    apt update
+
     echo "Updating packages for APT-based system..."
 	install_if_missing() {
     	if ! command -v "$1" &> /dev/null; then
@@ -33,14 +35,15 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	
 	install_if_missing "sudo"
 	install_if_missing "wget"
+    install_if_missing "ncurses-utils"
 
     if [[ "$OS_NAME" == "debian" ]]; then
-        install_if_missing "iptables-nft"
+        install_if_missing "iptables"
     fi
 
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
 clear
-echo -e "[\e[7\e[31mFATAL\e[0m] Oops! RPM systems, like $OS_NAME are not supported at this time"
+echo -e "[\e[7;31mFATAL\e[0m] Oops! RPM systems, like $OS_NAME are not supported at this time"
 echo -e "[\e[34mINFO\e[0m] RPM Compatibility is coming in Spearmint v3 (Grazing Deer)."
 exit 1
 #    echo "Updating packages for RPM-based system..."
@@ -61,16 +64,16 @@ exit 1
 #    exit 1
 fi
 
-mkdir -p /srv/peppermint
+mkdir -p /srv/spearmint
 
-cd /srv/peppermint
+cd /srv/spearmint
 if [[ "$OS_NAME" == "ubuntu" ]]; then
     wget "https://i.spearmint.sh/ubuntu.sh" -O Spearmint-Installer.sh
 elif [[ "$OS_NAME" == "debian" ]]; then
     wget "https://i.spearmint.sh/debian.sh" -O Spearmint-Installer.sh
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
     echo "Warning: This script is not compatible with RPM-based systems at the moment."
-    echo "Compatibility is planned in v3 (Grazing Deer)."
+    echo "Compatibility is planned in v3 Release 2 (Grazing Deer)."
     exit 1
 else
     echo "Unsupported OS. Exiting."
@@ -82,7 +85,7 @@ cat << 'EOF' > /usr/local/bin/spearmint
 #!/bin/bash
 
 # Define Peppermint installation directory
-INSTALL_DIR="/srv/peppermint"
+INSTALL_DIR="/srv/spearmint"
 
 show_help() {
     echo -e "\e[92m _____                                 _       _   "
@@ -94,7 +97,9 @@ show_help() {
     echo -e "\e[92m      | |                                          "
     echo -e "\e[92m      |_|                                          \e[0m"
     echo
-    echo "Usage: spearmint {install|version|start|stop|restart|upgrade|help}"
+    echo "Usage: spearmint {command}"
+    echo "Please report any issues to Sydney! sydmae on Discord."
+    echo "Issues: https://github.com/SpearmintLabs/Issues/issues"
     echo
     echo "Commands:"
     echo "  install   Install Peppermint ticket system"
@@ -103,6 +108,7 @@ show_help() {
     echo "  start     Start the Peppermint system"
     echo "  stop      Stop the Peppermint system"
     echo "  restart   Restart the Peppermint system"
+    echo "  status    Check the status of the Peppermint containers"
     echo "  upgrade   Update to the latest version of Peppermint"
     echo "  logs      Show the logs of the Peppermint and Postgres containers"
     echo "  help      Show this help menu"
@@ -119,7 +125,7 @@ case "$1" in
         fi
         ;;
     version)
-        echo "Spearmint v3 Grazing Deer"
+        echo "Spearmint v3 Release 1 (Grazing Deer)"
         ;;
     start)
         echo "Starting Peppermint..."
@@ -158,15 +164,23 @@ case "$1" in
     help)
         show_help
         ;;
+    diun)
+        cd "$INSTALL_DIR"
+        nano diun.yml
+        ;;
+    status)
+        cd "$INSTALL_DIR"
+        bash prettifier.sh
+        ;;
     *)
-        echo "Error! That command does not exist. Use spearmint help to see a list of available commands"
+        echo -e "[\e[7;31mERROR\e[0m] That command does not exist. Use spearmint help to see a list of available commands"
         ;;
 esac
 EOF
 
 chmod +x /usr/local/bin/spearmint
 
-echo "Deployment Information for Peppermint" > /srv/peppermint/sprmnt.txt
+echo "Deployment Information for Peppermint" > /srv/spearmint/sprmnt.txt
 
 clear
 
