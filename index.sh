@@ -21,6 +21,19 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
         exit 1
     fi
 
+    SPEARMINT_VERSION="Spearmint v3 Release 1 (Grazing Deer)"
+    SPEARMINT_INTVER="3.0.1"
+    REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/main/index.sh"
+    INSTALL_DIR="/srv/spearmint"
+
+    remote_version=$(curl -s "$REMOTE_URL" | grep -oP 'SPEARMINT_INTVER="\K[^"]+')
+    if [[ $remote_version && $remote_version != "$SPEARMINT_INTVER" ]]; then
+        echo -e "[Spearmint] New Spearmint version available! $SPEARMINT_INTVER -> $remote_version"
+        echo "Use 'spearmint pull' to download and install the new update."
+    fi
+
+
+
     apt update
 
     echo "Updating packages for APT-based system..."
@@ -35,6 +48,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	
 	install_if_missing "sudo"
 	install_if_missing "wget"
+    install_if_missing "curl"
     install_if_missing "ncurses-utils"
 
     if [[ "$OS_NAME" == "debian" ]]; then
@@ -65,6 +79,8 @@ exit 1
 fi
 
 mkdir -p /srv/spearmint
+mkdir -p /srv/spearmint/backup
+mkdir -p /srv/spearmint/addons
 
 cd /srv/spearmint
 if [[ "$OS_NAME" == "ubuntu" ]]; then
@@ -86,6 +102,90 @@ cat << 'EOF' > /usr/local/bin/spearmint
 
 # Define Peppermint installation directory
 INSTALL_DIR="/srv/spearmint"
+BACKUP_DIR="/srv/spearmint/backup"
+REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/main/index.sh"
+ADDON_DIR="/srv/spearmint/addons"
+
+backup_current_version() {
+    echo "Backing up current version..."
+    rm -rf "$BACKUP_DIR"
+    cp -r "$INSTALL_DIR" "$BACKUP_DIR"
+    echo "Backup completed."
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+show_addons_help() {
+    echo "Addons Management Commands:"
+    echo "  spearmint addons                Shows Info menu"
+    echo "  spearmint addons list           Lists all available addons"
+    echo "  spearmint addons install Item   Installs a specific addon (e.g., 'tmux', 'htop')"
+    echo "  spearmint addons remove Item    Removes a specific addon (e.g., 'tmux', 'htop')"
+}
+
+# Function to list available addons
+list_addons() {
+    echo "Available Addons:"
+    echo "  tmux      - Terminal multiplexer"
+    echo "  htop      - Interactive process viewer"
+    echo "  ncdu      - Disk usage analyzer"
+    echo "  glances   - Comprehensive system monitoring"
+    echo "  nmap      - Network scanner"
+    echo "  fail2ban  - Intrusion prevention tool"
+}
+
+# Function to install an addon
+install_addon() {
+    addon="$1"
+    if dpkg -s "$addon" &>/dev/null; then
+        echo "$addon is already installed."
+    else
+        echo "Installing $addon..."
+        apt-get update && apt-get install -y "$addon"
+        echo "$addon installed successfully."
+    fi
+}
+
+# Function to remove an addon
+remove_addon() {
+    addon="$1"
+    if dpkg -s "$addon" &>/dev/null; then
+        echo "Removing $addon..."
+        apt-get remove -y "$addon"
+        echo "$addon removed successfully."
+    else
+        echo "$addon is not installed."
+    fi
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 show_help() {
     echo -e "\e[92m _____                                 _       _   "
@@ -112,6 +212,9 @@ show_help() {
     echo "  upgrade   Update to the latest version of Peppermint"
     echo "  logs      Show the logs of the Peppermint and Postgres containers"
     echo "  help      Show this help menu"
+    echo "  addons    See suggested packages for your server!"
+    echo "  pull      Upgrades the Spearmint Installer"
+    echo "  rollback  Revert to the previous installer version"
     echo
 }
 
@@ -158,11 +261,39 @@ case "$1" in
     credits)
         echo -e "\e[96mAuthor: Sydney Morrison (syd.gg)\e[0m"
         echo -e "\e[93mSpecial Mention: Jack Andrews (Creator of Peppermint)\e[0m"
+        echo -e "\e[93mSpecial Mention: cutefluffypenguin (Adding additional instructions)\e[0m"
         echo ""
         echo -e "\e[92mSpearmint Labs\e[0m, a \e[36mCloud\e[0m\e[95mExis\e[0m \e[37mLLC\e[0m Company"
         ;;
     help)
         show_help
+        ;;
+    addons)
+        case "$2" in
+            help)
+                show_addons_help
+                ;;
+            list)
+                list_addons
+                ;;
+            install)
+                if [ -z "$3" ]; then
+                    echo "Please specify an addon to install, e.g., 'tmux'."
+                else
+                    install_addon "$3"
+                fi
+                ;;
+            remove)
+                if [ -z "$3" ]; then
+                    echo "Please specify an addon to remove, e.g., 'tmux'."
+                else
+                    remove_addon "$3"
+                fi
+                ;;
+            *)
+                show_addons_help
+                ;;
+        esac
         ;;
     diun)
         cd "$INSTALL_DIR"
@@ -172,6 +303,20 @@ case "$1" in
         cd "$INSTALL_DIR"
         bash prettifier.sh
         ;;
+    pull) 
+        backup_current_version
+        wget "$REMOTE_URL" -O "$INSTALL_DIR/index.sh"
+        chmod +x "$INSTALL_DIR/index.sh"
+        echo "Upgrade complete!"
+        ;;
+    rollback)
+        if [ -d "$BACKUP_DIR" ]; then
+            rm -rf "$INSTALL_DIR"
+            mv "$BACKUP_DIR" "$INSTALL_DIR"
+            echo "Rollback completed. Reverted to previous version."
+        else
+            echo "No backup found to rollback."
+        fi
     *)
         echo -e "[\e[7;31mERROR\e[0m] That command does not exist. Use spearmint help to see a list of available commands"
         ;;
