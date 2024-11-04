@@ -147,7 +147,7 @@ case "$1" in
         cd "$INSTALL_DIR"
         docker compose logs
         ;;
-    upgrade)
+    upgrade | update)
         echo "Upgrading Peppermint..."
         cd "$INSTALL_DIR"
         docker compose down
