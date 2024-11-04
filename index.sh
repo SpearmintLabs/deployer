@@ -23,7 +23,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 
     SPEARMINT_VERSION="Spearmint v3 Release 1 (Grazing Deer)"
     SPEARMINT_INTVER="3.0.1"
-    REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/main/index.sh"
+    REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/Updater-Test/index.sh"
     INSTALL_DIR="/srv/spearmint"
 
     remote_version=$(curl -s "$REMOTE_URL" | grep -oP 'SPEARMINT_INTVER="\K[^"]+')
@@ -103,7 +103,7 @@ cat << 'EOF' > /usr/local/bin/spearmint
 # Define Peppermint installation directory
 INSTALL_DIR="/srv/spearmint"
 BACKUP_DIR="/srv/spearmint/backup"
-REMOTE_URL="https://github.com/SpearmintLabs/deployer/blob/Updater-Test/index.sh"
+REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/Updater-Test/index.sh"
 ADDON_DIR="/srv/spearmint/addons"
 
 backup_current_version() {
