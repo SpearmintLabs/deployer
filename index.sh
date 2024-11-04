@@ -49,7 +49,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	install_if_missing "sudo"
 	install_if_missing "wget"
     install_if_missing "curl"
-    install_if_missing "ncurses-utils"
+    install_if_missing "rsync"
 
     if [[ "$OS_NAME" == "debian" ]]; then
         install_if_missing "iptables"
@@ -103,15 +103,17 @@ cat << 'EOF' > /usr/local/bin/spearmint
 # Define Peppermint installation directory
 INSTALL_DIR="/srv/spearmint"
 BACKUP_DIR="/srv/spearmint/backup"
-REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/main/index.sh"
+REMOTE_URL="https://github.com/SpearmintLabs/deployer/blob/Updater-Test/index.sh"
 ADDON_DIR="/srv/spearmint/addons"
 
 backup_current_version() {
     echo "Backing up current version..."
     rm -rf "$BACKUP_DIR"
-    cp -r "$INSTALL_DIR" "$BACKUP_DIR"
+    mkdir -p "$BACKUP_DIR"
+    rsync -a --exclude="$BACKUP_DIR" "$INSTALL_DIR/" "$BACKUP_DIR/"
     echo "Backup completed."
 }
+
 
 
 
@@ -174,6 +176,21 @@ remove_addon() {
     fi
 }
 
+spin() {
+    local chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+    local colors=('\e[31m' '\e[33m' '\e[32m' '\e[36m' '\e[34m' '\e[35m')
+    local delay=0.1
+    local duration=10  # Duration in seconds
+
+    echo -n "Spearmint is completing the backup task. Please wait    "
+    for ((i=0; i<$duration * 10; i++)); do
+        local char="${chars[i % ${#chars[@]}]}"
+        local color="${colors[i % ${#colors[@]}]}"
+        echo -ne "${color}${char}\e[0m\b"
+        sleep $delay
+    done
+    echo -ne "\b"  # Clear the spinner
+}
 
 
 
@@ -188,14 +205,14 @@ remove_addon() {
 
 
 show_help() {
-    echo -e "\e[92m _____                                 _       _   "
-    echo -e "\e[92m/  ___|                               (_)     | |  "
-    echo -e "\e[92m\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
-    echo -e "\e[92m \`--. \ '_ \ / _ \/ _\` | '__| '_ \` _ \| | '_ \| __|"
-    echo -e "\e[92m/\__/ / |_) |  __/ (_| | |  | | | | | | | | | | |_ "
-    echo -e "\e[92m\____/| .__/ \___|\__,_|_|  |_| |_| |_|_|_| |_|\__|"
-    echo -e "\e[92m      | |                                          "
-    echo -e "\e[92m      |_|                                          \e[0m"
+    echo -e '\e[92m   _____                                 _       _          ____  '
+    echo -e '\e[92m  / ____|                               (_)     | |        |___ \ '
+    echo -e '\e[92m | (___  _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_  __   ____) |'
+    echo -e '\e[92m  \___ \| '\''_ \ / _ \/ _` | '\''__| '\''_ '\'' _ \| | '\''_ \| __| \ \ / /__ < '
+    echo -e '\e[92m  ____) | |_) |  __/ (_| | |  | | | | | | | | | | |_   \ V /___) |'
+    echo -e '\e[92m |_____/| .__/ \___|\__,_|_|  |_| |_| |_|_|_| |_|\__|   \_/|____/ '
+    echo -e '\e[92m        | |                                                       '
+    echo -e '\e[92m        |_|                                                       \e[0m'
     echo
     echo "Usage: spearmint {command}"
     echo "Please report any issues to Sydney! sydmae on Discord."
@@ -228,7 +245,7 @@ case "$1" in
         fi
         ;;
     version)
-        echo "Spearmint v3 Release 1 (Grazing Deer)"
+        echo "Spearmint v3 Release Canidate 3 (Snoozing Deer)"
         ;;
     start)
         echo "Starting Peppermint..."
@@ -305,9 +322,18 @@ case "$1" in
         ;;
     pull) 
         backup_current_version
-        wget "$REMOTE_URL" -O "$INSTALL_DIR/index.sh"
-        chmod +x "$INSTALL_DIR/index.sh"
+        clear
+        (sleep 10) &
+        spin
+        clear
+        find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name "backup" ! -name "addons" -exec rm -rf {} +
+        wget "$REMOTE_URL" -O "/srv/spearmint/index.sh"
+        mv "/srv/spearmint/index.sh" "/usr/local/bin/spearmint"
+        chmod +x "/usr/local/bin/spearmint"
         echo "Upgrade complete!"
+        hash -r
+        echo "Spearmint has been updated" > /srv/spearmint/sprmnt.txt
+        spearmint version
         ;;
     rollback)
         if [ -d "$BACKUP_DIR" ]; then
@@ -317,6 +343,7 @@ case "$1" in
         else
             echo "No backup found to rollback."
         fi
+        ;;
     *)
         echo -e "[\e[7;31mERROR\e[0m] That command does not exist. Use spearmint help to see a list of available commands"
         ;;
