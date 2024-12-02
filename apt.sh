@@ -84,7 +84,9 @@ else
 fi
 chmod +x Spearmint-Installer.sh
 
-cat << 'EOF' > /usr/local/bin/spearmint
+rm -rf /usr/bin/spearmint
+
+cat << 'EOF' > /usr/bin/spearmint
 #!/bin/bash
 
 # Define Peppermint installation directory
@@ -181,7 +183,7 @@ case "$1" in
 esac
 EOF
 
-chmod +x /usr/local/bin/spearmint
+chmod +x usr/bin/spearmint
 
 echo "Deployment Information for Peppermint" > /srv/spearmint/sprmnt.txt
 
