@@ -128,6 +128,7 @@ show_help() {
     echo
     echo "Usage: spearmint {command}"
     echo "Please report any issues to Sydney! sydmae on Discord."
+    echo "Discord Server: https://discord.gg/rhYDuSeeag"
     echo "Issues: https://github.com/SpearmintLabs/Issues/issues"
     echo
     echo "Commands:"
@@ -190,7 +191,7 @@ case "$1" in
         echo ""
         echo -e "\e[92mSpearmint Labs\e[0m, a \e[36mCloud\e[0m\e[95mExis\e[0m \e[37mLLC\e[0m Company"
         ;;
-    help)
+    help | "")
         show_help
         ;;
     diun)
@@ -216,4 +217,4 @@ rm -rf /srv/apt-spearmint
 
 clear_screen
 
-spearmint help
+spearmint
