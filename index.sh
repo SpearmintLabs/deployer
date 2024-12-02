@@ -79,8 +79,7 @@ exit 1
 fi
 
 mkdir -p /srv/spearmint
-mkdir -p /srv/spearmint/backup
-mkdir -p /srv/spearmint/addons
+mkdir -p /srv/spearmint-backups
 
 cd /srv/spearmint
 if [[ "$OS_NAME" == "ubuntu" ]]; then
@@ -102,7 +101,7 @@ cat << 'EOF' > /usr/local/bin/spearmint
 
 # Define Peppermint installation directory
 INSTALL_DIR="/srv/spearmint"
-BACKUP_DIR="/srv/spearmint/backup"
+BACKUP_DIR="/srv/spearmint-backups"
 REMOTE_URL="https://raw.githubusercontent.com/SpearmintLabs/deployer/Updater-Test/index.sh"
 ADDON_DIR="/srv/spearmint/addons"
 
@@ -113,25 +112,6 @@ backup_current_version() {
     rsync -a --exclude="$BACKUP_DIR" "$INSTALL_DIR/" "$BACKUP_DIR/"
     echo "Backup completed."
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 show_addons_help() {
     echo "Addons Management Commands:"
@@ -148,7 +128,6 @@ list_addons() {
     echo "  htop      - Interactive process viewer"
     echo "  ncdu      - Disk usage analyzer"
     echo "  glances   - Comprehensive system monitoring"
-    echo "  nmap      - Network scanner"
     echo "  fail2ban  - Intrusion prevention tool"
 }
 
@@ -176,6 +155,34 @@ remove_addon() {
     fi
 }
 
+spearmint_update () {
+    backup_current_version
+    clear
+    (sleep 10) &
+    spin
+    clear
+    cd $BACKUP_DIR
+    # Function to verify all files are in the dir
+    rm -rf $INSTALL_DIR
+    mkdir -p $INSTALL_DIR
+    cd $INSTALL_DIR
+    wget $REMOTE_URL
+    chmod +x index.sh && bash index.sh # This should install the new Spearmint deployer
+    echo "Spearmint has been updated" > /srv/spearmint/sprmnt.txt
+    rm -rf /usr/local/bin/spearmint
+    mv "/srv/spearmint/index.sh" "/usr/local/bin/spearmint"
+    chmod +x "/usr/local/bin/spearmint"
+}
+
+rollback () {
+    echo "Starting the rollback..."
+    rm -f /srv/spearmint/*
+    rsync -av "$BACKUP_DIR" "$INSTALL_DIR"
+    rm -f /usr/local/bin/spearmint*
+    mv "/srv/spearmint/{index.sh,Spearmint.sh}" "/usr/local/bin/spearmint"
+    chmod +x "/usr/local/bin/spearmint"
+}
+
 spin() {
     local chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
     local colors=('\e[31m' '\e[33m' '\e[32m' '\e[36m' '\e[34m' '\e[35m')
@@ -186,23 +193,11 @@ spin() {
     for ((i=0; i<$duration * 10; i++)); do
         local char="${chars[i % ${#chars[@]}]}"
         local color="${colors[i % ${#colors[@]}]}"
-        echo -ne "${color}${char}\e[0m\b"
+        echo -ne "${color}\e[107m${char}\e[0m\b"  # White background with colored spinner
         sleep $delay
     done
     echo -ne "\b"  # Clear the spinner
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 show_help() {
     echo -e '\e[92m   _____                                 _       _          ____  '
@@ -245,7 +240,7 @@ case "$1" in
         fi
         ;;
     version)
-        echo "Spearmint v3 Release Canidate 3 (Snoozing Deer)"
+        echo "Spearmint v3 Release Canidate 3 (Coked Up Deer)"
         ;;
     start)
         echo "Starting Peppermint..."
@@ -321,19 +316,9 @@ case "$1" in
         bash prettifier.sh
         ;;
     pull) 
-        backup_current_version
+        spearmint_update
         clear
-        (sleep 10) &
-        spin
-        clear
-        find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name "backup" ! -name "addons" -exec rm -rf {} +
-        wget "$REMOTE_URL" -O "/srv/spearmint/index.sh"
-        mv "/srv/spearmint/index.sh" "/usr/local/bin/spearmint"
-        chmod +x "/usr/local/bin/spearmint"
-        echo "Upgrade complete!"
-        hash -r
-        echo "Spearmint has been updated" > /srv/spearmint/sprmnt.txt
-        spearmint version
+        spearmint help
         ;;
     rollback)
         if [ -d "$BACKUP_DIR" ]; then
