@@ -60,7 +60,6 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	
 	install_if_missing "sudo"
 	install_if_missing "wget"
-    install_if_missing "ncurses-utils"
 
     if [[ "$OS_NAME" == "debian" ]]; then
         install_if_missing "iptables"
