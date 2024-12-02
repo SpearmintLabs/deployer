@@ -1,5 +1,30 @@
 #!/bin/bash
 
+set -e
+
+DEBUG=0
+
+# Function to handle clearing the screen
+clear_screen() {
+    if [[ "$DEBUG" -eq 0 ]]; then
+        clear
+    fi
+}
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --debug)
+            DEBUG=1
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root."
     exit 1
@@ -27,7 +52,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
 	install_if_missing() {
     	if ! command -v "$1" &> /dev/null; then
         	echo "$1 not found, installing..."
-        	apt-get update && apt-get install -y "$1"
+        	apt-get install -y "$1"
     	else
         	echo "$1 is already installed, continuing..."
     	fi
@@ -42,7 +67,7 @@ if [[ "$OS_NAME" == "ubuntu" || "$OS_NAME" == "debian" ]]; then
     fi
 
 elif [[ "$OS_NAME" == "fedora" || "$OS_NAME" == "centos" || "$OS_NAME" == "rhel" || "$OS_NAME" == "almalinux" ]]; then
-clear
+clear_screen
 echo -e "[\e[7;31mFATAL\e[0m] Oops! RPM systems, like $OS_NAME are not supported at this time"
 echo -e "[\e[34mINFO\e[0m] RPM Compatibility is coming in Spearmint v3 (Grazing Deer)."
 exit 1
@@ -183,13 +208,13 @@ case "$1" in
 esac
 EOF
 
-chmod +x usr/bin/spearmint
+chmod +x /usr/bin/spearmint
 
 echo "Deployment Information for Peppermint" > /srv/spearmint/sprmnt.txt
 
 echo "Destroying apt folder"
 rm -rf /srv/apt-spearmint
 
-clear
+clear_screen
 
 spearmint help
